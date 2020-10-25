@@ -1,6 +1,7 @@
 #import "AbstractPost+HashHelpers.h"
 #import "Media+WPMediaAsset.h"
 #import "WordPress-Swift.h"
+@import WordPressKit;
 
 @implementation AbstractPost (HashHelpers)
 
@@ -10,24 +11,22 @@
     // that's the purpose of the `-additionalContentHashes` extension point.
 
     NSArray<NSData *> *hashedContents = @[
-                                          [self hashForNSInteger:self.blog.dotComID.integerValue],
-                                          [self hashForNSInteger:self.postID.integerValue],
-                                          [self hashForString:self.postTitle],
-                                          [self hashForString:self.content],
-                                          [self hashForDouble:self.dateCreated.timeIntervalSinceReferenceDate],
-                                          [self hashForString:self.permaLink],
-                                          [self hashForString:self.mt_excerpt],
-                                          [self hashForString:self.status],
-                                          [self hashForString:self.password],
-                                          [self hashForString:self.author],
-                                          [self hashForNSInteger:self.authorID.integerValue],
-                                          [self hashForString:self.featuredImage.identifier],
-                                          [self hashForString:self.wp_slug]];
+                                          [SHAHasher hashForNSInteger:self.blog.dotComID.integerValue],
+                                          [SHAHasher hashForNSInteger:self.postID.integerValue],
+                                          [SHAHasher hashForString:self.postTitle],
+                                          [SHAHasher hashForString:self.content],
+                                          [SHAHasher hashForDouble:self.dateCreated.timeIntervalSinceReferenceDate],
+                                          [SHAHasher hashForString:self.permaLink],
+                                          [SHAHasher hashForString:self.mt_excerpt],
+                                          [SHAHasher hashForString:self.status],
+                                          [SHAHasher hashForString:self.password],
+                                          [SHAHasher hashForString:self.author],
+                                          [SHAHasher hashForNSInteger:self.authorID.integerValue],
+                                          [SHAHasher hashForString:self.featuredImage.identifier],
+                                          [SHAHasher hashForString:self.wp_slug]];
 
 
     NSArray<NSData *> *finalHashes = [hashedContents arrayByAddingObjectsFromArray:self.additionalContentHashes];
-
-    NSMutableData *mutableData = [NSMutableData data];
 
     // So, there are multiple ways of combining all those hashes. You need to be careful not to lose the entropy though.
     // Initially, I wanted to just XOR them together, which is totally reasonable thing to do!
@@ -42,16 +41,7 @@
     // What I'm doing here instead is just treating all the "partial" hashes as a dumb bag of bits,
     // combining them together and the final hash is SHA256 of _that_.
     // Hopefully that'll be enough.
-
-    for (NSData *hash in finalHashes) {
-        [mutableData appendData:hash];
-    }
-
-    unsigned char finalDigest[CC_SHA256_DIGEST_LENGTH];
-
-    CC_SHA256(mutableData.bytes, (CC_LONG)mutableData.length, finalDigest);
-
-    return [self sha256StringFromData:[NSData dataWithBytes:finalDigest length:CC_SHA256_DIGEST_LENGTH]];
+    return [SHAHasher combineHashes:finalHashes];
 }
 
 
@@ -60,6 +50,11 @@
 }
 
 #pragma mark - SHA256 calculations
+
+- (NSData *)hashForStringArray:(NSArray *) array {
+    NSString *joinedArrayString = [array componentsJoinedByString:@""];
+    return [SHAHasher hashForString:joinedArrayString];
+}
 
 - (NSData *)hashForString:(NSString *) string {
     if (!string) {
@@ -86,6 +81,14 @@
     unsigned char digest[CC_SHA256_DIGEST_LENGTH];
 
     CC_SHA256(&dbl, sizeof(dbl), digest);
+
+    return [NSData dataWithBytes:digest length:CC_SHA256_DIGEST_LENGTH];
+}
+
+- (NSData *)hashForBool:(BOOL)boolean {
+    unsigned char digest[CC_SHA256_DIGEST_LENGTH];
+
+    CC_SHA256(&boolean, sizeof(boolean), digest);
 
     return [NSData dataWithBytes:digest length:CC_SHA256_DIGEST_LENGTH];
 }
