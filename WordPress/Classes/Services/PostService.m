@@ -780,14 +780,16 @@ typedef void (^AutosaveSuccessBlock)(RemotePost *post, NSString *previewURL);
     post.author = remotePost.authorDisplayName;
     post.authorID = remotePost.authorID;
     post.date_created_gmt = remotePost.date;
-    post.dateModified = remotePost.dateModified;
     post.postTitle = remotePost.title;
     post.permaLink = [remotePost.URL absoluteString];
     post.content = remotePost.content;
     post.status = remotePost.status;
     post.password = remotePost.password;
-    post.hasVersionConflict = post.hasRevision;
-    post.revision.hasVersionConflict = post.hasRevision;
+    if (post.dateModified != remotePost.dateModified) {
+        post.hasVersionConflict = post.hasRevision;
+        post.revision.hasVersionConflict = post.hasRevision;
+    }
+    post.dateModified = remotePost.dateModified;
     
     if (remotePost.postThumbnailID != nil) {
         post.featuredImage = [Media existingOrStubMediaWithMediaID: remotePost.postThumbnailID inBlog:post.blog];
