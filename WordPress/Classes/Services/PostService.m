@@ -775,21 +775,22 @@ typedef void (^AutosaveSuccessBlock)(RemotePost *post, NSString *previewURL);
 }
 
 - (void)updatePost:(AbstractPost *)post withRemotePost:(RemotePost *)remotePost {
+    NSString *remotePostHash = [remotePost contentHash];
     NSNumber *previousPostID = post.postID;
     post.postID = remotePost.postID;
     post.author = remotePost.authorDisplayName;
     post.authorID = remotePost.authorID;
     post.date_created_gmt = remotePost.date;
+    post.dateModified = remotePost.dateModified;
     post.postTitle = remotePost.title;
     post.permaLink = [remotePost.URL absoluteString];
     post.content = remotePost.content;
     post.status = remotePost.status;
     post.password = remotePost.password;
-    if (post.dateModified != remotePost.dateModified) {
+    if (post.lastRemoteUpdateHash != nil && ![post.lastRemoteUpdateHash isEqualToString:remotePostHash]) {
         post.hasVersionConflict = post.hasRevision;
         post.revision.hasVersionConflict = post.hasRevision;
     }
-    post.dateModified = remotePost.dateModified;
     
     if (remotePost.postThumbnailID != nil) {
         post.featuredImage = [Media existingOrStubMediaWithMediaID: remotePost.postThumbnailID inBlog:post.blog];
@@ -881,6 +882,7 @@ typedef void (^AutosaveSuccessBlock)(RemotePost *post, NSString *previewURL);
     }
 
     post.statusAfterSync = post.status;
+    post.lastRemoteUpdateHash = remotePostHash;
 }
 
 - (RemotePost *)remotePostWithPost:(AbstractPost *)post
