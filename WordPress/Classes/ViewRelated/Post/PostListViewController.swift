@@ -406,10 +406,13 @@ class PostListViewController: AbstractPostListViewController, UIViewControllerRe
         var predicates = [NSPredicate]()
 
         if let blog = blog {
-            // Show all original posts without a revision & revision posts.
-            let basePredicate = NSPredicate(format: "blog = %@ && revision = nil", blog)
+            let query = "blog = %@"
+            let basePredicate = NSPredicate(format: query, blog)
             predicates.append(basePredicate)
         }
+
+        predicates.append(antiDuplicatePredicate())
+        predicates.append(outdatedDraftPredicate())
 
         let searchText = currentSearchTerm() ?? ""
         let filterPredicate = searchController.isActive ? NSPredicate(format: "postTitle CONTAINS[cd] %@", searchText) : filterSettings.currentPostListFilter().predicateForFetchRequest
@@ -439,6 +442,34 @@ class PostListViewController: AbstractPostListViewController, UIViewControllerRe
 
         let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
         return predicate
+    }
+
+    /// Show revision posts and original posts without a revision within the current tab
+    ///
+    /// Original posts are only shown instead of their local autosave revisions when the local autosave
+    /// has the wrong status for the current tab.
+    ///
+    /// This happens when a remote update changes the status of the original post
+    /// e.g. publishing a locally autosaved draft from another device
+    private func antiDuplicatePredicate() -> NSPredicate {
+        let allowedPostStatusesForCurrentTab = filterSettings.currentPostListFilter().statuses
+
+        let isLatestLocalVersion = "revision = nil"
+        let isRemoteStatusUpdate = "hasVersionConflict = true && NOT (revision.status IN (%@))"
+        let query = "\(isLatestLocalVersion) || \(isRemoteStatusUpdate)"
+        return NSPredicate(format: query, allowedPostStatusesForCurrentTab.strings)
+    }
+
+    /// Removes locally autosaved drafts from draft tab when that post was published remotely.
+    ///
+    /// When there's a remote update that changes the status of the original post the remotely published original is shown
+    /// instead of the local autosave revision.
+    private func outdatedDraftPredicate() -> NSPredicate {
+        let allowedPostStatusesForCurrentTab = filterSettings.currentPostListFilter().statuses
+        let isOriginal = "original = nil"
+        let originalDidntHaveStatusUpdatedRemotely = "original.status IN %@"
+        let query = "\(isOriginal) || \(originalDidntHaveStatusUpdatedRemotely)"
+        return NSPredicate(format: query, allowedPostStatusesForCurrentTab.strings)
     }
 
     // MARK: - Table View Handling
