@@ -425,6 +425,29 @@ class PostTests: XCTestCase {
         XCTAssertNotEqual(post.calculateConfirmedChangesContentHash(), correctHash)
     }
 
+    func testAdditionalContentHashing() {
+        let post = newTestPost()
+        let hashWithoutAdditionalContent = post.additionalContentHashes()
+
+        addAdditionalContent(to: post)
+        XCTAssertNotEqual(hashWithoutAdditionalContent, post.additionalContentHashes())
+        XCTAssertEqual(post.additionalContentHashes(), post.additionalContentHashes())
+    }
+
+    func testAdditionalContentHashingImpactsMainHash() {
+        let correctHash = "d8edd9c05c941d2c7e697c00fd34b60cdf5e7d572a762fb39fbbee5ef9db177a"
+
+        let post = newTestPost()
+        let hashWithoutAdditionalContent = post.calculateConfirmedChangesContentHash()
+        addAdditionalContent(to: post)
+        XCTAssertNotEqual(post.calculateConfirmedChangesContentHash(), hashWithoutAdditionalContent)
+        XCTAssertEqual(post.calculateConfirmedChangesContentHash(), correctHash)
+    }
+
+    private func addAdditionalContent(to post: Post) {
+        post.addCategories([newTestPostCategory("endgames"), newTestPostCategory("openings")])
+    }
+
     func testAutoUploadExpiration() {
         let post = newTestPost()
 
