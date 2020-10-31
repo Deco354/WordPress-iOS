@@ -318,12 +318,12 @@ class Post: AbstractPost {
             return acc + obj
         } ?? ""
 
-        return [hash(for: publicID ?? ""),
-                hash(for: tags ?? ""),
-                hash(for: postFormat ?? ""),
-                hash(for: stringifiedCategories),
-                hash(for: geolocation?.latitude ?? 0),
-                hash(for: geolocation?.longitude ?? 0),
-                hash(for: isStickyPost ? 1 : 0)]
+        return [SHAHasher.hash(for: publicID ?? ""),
+                SHAHasher.hash(for: tags ?? ""),
+                SHAHasher.hash(for: postFormat ?? ""),
+                SHAHasher.hash(for: stringifiedCategories),
+                SHAHasher.hash(for: geolocation?.latitude ?? 0),
+                SHAHasher.hash(for: geolocation?.longitude ?? 0),
+                SHAHasher.hash(for: isStickyPost ? 1 : 0)]
     }
 }
