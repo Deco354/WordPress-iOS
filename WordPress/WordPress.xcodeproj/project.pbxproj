@@ -2593,6 +2593,7 @@
 		10BBFF34EBDA2F9B8CB48DF6 /* Pods-WordPressUITests.release-internal.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WordPressUITests.release-internal.xcconfig"; path = "../Pods/Target Support Files/Pods-WordPressUITests/Pods-WordPressUITests.release-internal.xcconfig"; sourceTree = "<group>"; };
 		131D0EE49695795ECEDAA446 /* Pods-WordPressTest.release-alpha.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WordPressTest.release-alpha.xcconfig"; path = "../Pods/Target Support Files/Pods-WordPressTest/Pods-WordPressTest.release-alpha.xcconfig"; sourceTree = "<group>"; };
 		1431237D252D048D005B08B7 /* WordPress 100.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "WordPress 100.xcdatamodel"; sourceTree = "<group>"; };
+		1495C6A22539EB1D00421E22 /* WordPress 101.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "WordPress 101.xcdatamodel"; sourceTree = "<group>"; };
 		1702BBDB1CEDEA6B00766A33 /* BadgeLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BadgeLabel.swift; sourceTree = "<group>"; };
 		1702BBDF1CF3034E00766A33 /* DomainsService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DomainsService.swift; sourceTree = "<group>"; };
 		1703D04B20ECD93800D292E9 /* Routes+Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Routes+Post.swift"; sourceTree = "<group>"; };
@@ -17281,6 +17282,7 @@
 		E125443B12BF5A7200D87A0A /* WordPress.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				1495C6A22539EB1D00421E22 /* WordPress 101.xcdatamodel */,
 				1431237D252D048D005B08B7 /* WordPress 100.xcdatamodel */,
 				46183CF1251BD5F1004F9AFD /* WordPress 99.xcdatamodel */,
 				8BD8201724BC93B500FF25FD /* WordPress 98.xcdatamodel */,
@@ -17382,7 +17384,7 @@
 				8350E15911D28B4A00A7B073 /* WordPress.xcdatamodel */,
 				E125443D12BF5A7200D87A0A /* WordPress 2.xcdatamodel */,
 			);
-			currentVersion = 1431237D252D048D005B08B7 /* WordPress 100.xcdatamodel */;
+			currentVersion = 1495C6A22539EB1D00421E22 /* WordPress 101.xcdatamodel */;
 			name = WordPress.xcdatamodeld;
 			path = Classes/WordPress.xcdatamodeld;
 			sourceTree = "<group>";

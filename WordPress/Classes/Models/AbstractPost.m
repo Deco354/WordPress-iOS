@@ -39,6 +39,7 @@
 @dynamic autosaveModifiedDate;
 @dynamic autosaveIdentifier;
 @dynamic hasVersionConflict;
+@dynamic lastRemoteUpdateHash;
 
 @synthesize restorableStatus;
 
